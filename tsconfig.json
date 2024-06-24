@@ -1,12 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    "target": "es6",                          // or any other target you are using
+    "module": "commonjs",                     // or any other module system you are using
+    "strict": true,                           // enable all strict type-checking options
+    "esModuleInterop": true,                  // enable the esModuleInterop flag
+    "skipLibCheck": true,                     // optionally skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true  // ensure consistent casing in import paths
   },
   "include": [
     "**/*.ts",
