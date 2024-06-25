@@ -1,6 +1,7 @@
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import { View } from "react-native";
 
 SplashScreen.preventAutoHideAsync()
 
@@ -24,10 +25,12 @@ export default function RootLayout() {
   if(!fontsLoaded &&  !error) return null
 
   return (
-    <Stack screenOptions={{headerShown:false}}>
-      <Stack.Screen name="index"  />
-      <Stack.Screen name="(auth)"  />
-      <Stack.Screen name="(tabs)"  />
+    <Stack screenOptions={{headerShown:false}} >
+      <View className="bg-background">
+        <Stack.Screen name="index"  />
+        <Stack.Screen name="(auth)"  />
+        <Stack.Screen name="(tabs)"  />
+      </View>
     </Stack>
   );
 }
