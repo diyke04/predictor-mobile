@@ -12,4 +12,12 @@ declare module 'react-native' {
   }
   // Add other component props as needed
 }
+declare module '*.jpg' {
+  const value: string;
+  export default value;
+}
 
+declare module '*.png' {
+  const value: string;
+  export default value;
+}
