@@ -26,11 +26,10 @@ export default function RootLayout() {
 
   return (
     <Stack screenOptions={{headerShown:false}} >
-      <View className="bg-background">
+    
         <Stack.Screen name="index"  />
         <Stack.Screen name="(auth)"  />
         <Stack.Screen name="(tabs)"  />
-      </View>
     </Stack>
   );
 }

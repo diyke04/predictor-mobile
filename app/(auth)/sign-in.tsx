@@ -1,9 +1,10 @@
-import { View, Image } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Images from '../../constants/Images'
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
+import { Link } from 'expo-router';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -23,8 +24,8 @@ const SignIn = () => {
 
   return (
     <SafeAreaView>
-      <View className='flex-1 w-full justify-center items-center'>
-        <Image source={Images.logo1} resizeMode='contain' className='w-[80%]' />
+      <View className='bg-background justify-center items-center w-[100%] h-full p-4'>
+        <Image source={Images.logo1} resizeMode='contain' className='w-[85%]' />
         <FormField 
           placeholder='username' 
           inputTitle='Username' 
@@ -43,6 +44,13 @@ const SignIn = () => {
           title='Login'
           onPress={handleSubmit}
         />
+
+      <View className='flex-row items-center'>
+        <Text className='text-gray-100 text-lg'> Dont have an account yet?</Text>
+        <Link href="/sign-up" className='text-secondary-100 '>Sign up</Link>
+
+      </View>
+
       </View>
     </SafeAreaView>
   );

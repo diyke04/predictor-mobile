@@ -11,14 +11,14 @@ interface FormFieldProps {
 
 const FormField: React.FC<FormFieldProps> = ({ placeholder, inputTitle, value, setValue, secureTextEntry }) => {
   return (
-    <View className='p-4'>
+    <View className='p-2 w-full '>
       <Text className='text-gray-100 font-base text-left p-2'>{inputTitle}</Text>
       <TextInput 
         placeholder={placeholder}
         value={value}
         onChangeText={setValue}
         secureTextEntry={secureTextEntry}
-        className='bg-white text-gray-800 border-gray-700'
+        className='bg-white text-gray-800 border-gray-700 p-4'
       />
     </View>
   );

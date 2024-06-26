@@ -6,13 +6,13 @@ import images from '../constants/Images'
 
 export default function Index() {
   return (
-    <SafeAreaView className="bg-gray-900 flex-1 justify-center items-center" >
-      <ScrollView contentContainerStyle={{height:'100%'}}>
+    <SafeAreaView className="" >
+      <ScrollView contentContainerStyle={{height:'100%'}} className="bg-background">
         <View className="w-full justify-center items-center h-full px-4">
-          <Image source={images.logo} resizeMode="contain" className="w-[115px] h-[35px]"/>
+          <Image source={images.logo1} resizeMode="contain" className="w-[85%] h-[30%] "/>
           
-          <Text className="text-6xl text-center  font-pbold text-gray-100 " >Point Predict</Text>
-          <Link href={'/sign-in'}>Get started </Link>
+      
+          <Link href={'/sign-in'} className="text-color2 text-3xl font-pbold ">Get started </Link>
           
         </View>
       </ScrollView>
