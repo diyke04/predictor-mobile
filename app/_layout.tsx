@@ -1,7 +1,6 @@
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
-import { View } from "react-native";
 import { AuthProvider } from "../context/AuthContext";
 
 SplashScreen.preventAutoHideAsync()
@@ -26,12 +25,14 @@ export default function RootLayout() {
   if(!fontsLoaded &&  !error) return null
 
   return (
+    <AuthProvider> 
     <Stack screenOptions={{headerShown:false}} >
-      <AuthProvider>     
+        
         <Stack.Screen name="index"  />
         <Stack.Screen name="(auth)"  />
         <Stack.Screen name="(tabs)"  />
-      </AuthProvider>
+      
     </Stack>
+    </AuthProvider>
   );
 }

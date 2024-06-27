@@ -54,13 +54,13 @@ const SignUp = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-background">
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View className="flex-1 justify-center items-center p-4 bg-gray-100">
-          <Image source={Images.logo1} resizeMode='contain' className="w-[85%] mb-8" />
+        <View className="flex-1 justify-center items-center p-4">
+          <Image source={Images.logo1} resizeMode='contain' className="w-[200] h-[100] "  />
           <FormField
             placeholder='Username'
             inputTitle='Username'
@@ -83,7 +83,7 @@ const SignUp = () => {
             <ActivityIndicator size="large" color="#0000ff" className="mt-4" />
           ) : (
             <CustomButton
-              title='Login'
+              title='Register'
               onPress={handleSubmit}
               accessible={true}
               accessibilityRole="button"
@@ -92,8 +92,8 @@ const SignUp = () => {
           )}
 
           <View className="flex-row items-center mt-4">
-            <Text className="text-gray-600 text-lg">Already have an account?</Text>
-            <Link href="/sign-in" className="text-blue-500 ml-2">Sign in</Link>
+            <Text className="text-gray-100 text-lg">Already have an account?</Text>
+            <Link href="/sign-in" className="text-color2 text-lg ml-2">Sign in</Link>
           </View>
         </View>
       </KeyboardAvoidingView>

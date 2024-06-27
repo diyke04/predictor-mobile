@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Alert, ActivityIndicator, Platform } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import debounce from 'lodash.debounce';
 import { useAuth } from '../../context/AuthContext';
@@ -25,8 +25,10 @@ const FixtureList: React.FC = () => {
 
   useEffect(() => {
     const fetchMatches = async () => {
+      console.log(token)
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/fixtures/user/not-predicted?league_id=${leagueId}`, {
+        const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+        const response = await axios.get(`${serverUrl}/api/fixtures/user/not-predicted?league_id=${1}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -91,7 +93,7 @@ const FixtureList: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: Fixture }) => (
-    <View key={item.id} className="bg-white rounded-lg p-4 mb-4 shadow-md">
+    <View key={item.id} className="bg-background rounded-lg p-4 mb-4 shadow-md">
       <View className="flex-row justify-between mb-2">
         <Text className="text-sm text-gray-500">{item.league.name}</Text>
         <Text className="text-sm text-gray-500">{new Date(item.match_date).toLocaleString()}</Text>
