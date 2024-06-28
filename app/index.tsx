@@ -7,9 +7,9 @@ import { useAuth } from '../context/AuthContext';
 export default function Index() {
   const { token } = useAuth();
 
-  if (token) {
-    return <Redirect href="/fixtures" />;
-  }
+  //if (token) {
+    //return <Redirect href="/fixtures" />;
+ // }
 
   return (
     <SafeAreaView className="" >

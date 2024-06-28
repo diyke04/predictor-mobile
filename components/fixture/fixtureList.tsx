@@ -28,8 +28,8 @@ const FixtureList: React.FC = () => {
     const fetchMatches = async () => {
       console.log(token)
       try {
-        //const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
-        const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
+        const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+        //const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
         const response = await axios.get(`${serverUrl}/api/fixtures/user/not-predicted?league_id=${1}`, {
           headers: { Authorization: `Bearer ${token}` }
         });

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { axiosInstance } from '../../config/https';
+import axios from 'axios';
 
 interface User {
   id: number;
@@ -47,6 +48,7 @@ interface GroupedPredictions {
 }
 
 const PredictionList: React.FC = () => {
+  console.log("called")
   const { token } = useAuth();
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,11 +57,17 @@ const PredictionList: React.FC = () => {
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const response = await axiosInstance.get('/predictions/user'); // Adjust endpoint as per your backend setup
+        const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+        //const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
+        const response = await axios.get(`${serverUrl}/api/predictions/user?user_id=${1}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (response.status !== 200) {
+        console.log(response.data)
           throw new Error('Failed to fetch predictions');
         }
         const data: Prediction[] = response.data;
+        console.log("data",data)
         setPredictions(data);
         setLoading(false);
       } catch (error) {
@@ -132,7 +140,7 @@ const PredictionList: React.FC = () => {
 
   const renderPrediction = ({ item }: { item: Prediction }) => (
     <View className="mb-4 p-4 bg-background rounded-lg shadow-md">
-      <View className="flex-row justify-between items-center p-2">
+      <View className="flex-row bg-gray-100 justify-between items-center p-4">
         <Text className="flex-1">{item.fixture.home_team} vs {item.fixture.away_team}</Text>
         <Text className="flex-1">
           {item.fixture.home_team_ft_score !== null ? item.fixture.home_team_ft_score : '-'} - {item.fixture.away_team_ft_score !== null ? item.fixture.away_team_ft_score : '-'}
