@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { axiosInstance } from '../../config/https';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 interface User {
   id: number;
@@ -53,32 +54,44 @@ const PredictionList: React.FC = () => {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const fetchPredictions = async () => {
+    //const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
+
+    try {
+      setLoading(true);
+      const user_id = (jwtDecode(token) as { id: number }).id;
+      const response = await axiosInstance.get(`/api/predictions/user?user_id=${user_id}`);
+      if (response.status !== 200) {
+        throw new Error('Failed to fetch matches');
+      }
+      const data: Prediction[] = response.data;
+      setPredictions(data);
+    } catch (error) {
+      console.error('Error fetching predictions:', error);
+      setError(error.response ? error.response.data.message : 'Failed to fetch predictions');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPredictions = async () => {
-      try {
-        const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
-        //const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
-        const response = await axios.get(`${serverUrl}/api/predictions/user?user_id=${1}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (response.status !== 200) {
-        console.log(response.data)
-          throw new Error('Failed to fetch predictions');
-        }
-        const data: Prediction[] = response.data;
-        console.log("data",data)
-        setPredictions(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching predictions:', error);
-        setError('Failed to fetch predictions');
-        setLoading(false);
-      }
-    };
-
     fetchPredictions();
+
+    const interval = setInterval(() => {
+      fetchPredictions();
+    }, 60000000); 
+
+    return () => clearInterval(interval); 
   }, [token]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchPredictions();
+  }, []);
 
   const groupedPredictions: GroupedPredictions = predictions.reduce((acc: GroupedPredictions, prediction) => {
     const week = prediction.fixture.match_week.toString();
@@ -139,31 +152,42 @@ const PredictionList: React.FC = () => {
   }
 
   const renderPrediction = ({ item }: { item: Prediction }) => (
-    <View className="mb-4 p-4 bg-background rounded-lg shadow-md">
-      <View className="flex-row bg-gray-100 justify-between items-center p-4">
-        <Text className="flex-1">{item.fixture.home_team} vs {item.fixture.away_team}</Text>
-        <Text className="flex-1">
-          {item.fixture.home_team_ft_score !== null ? item.fixture.home_team_ft_score : '-'} - {item.fixture.away_team_ft_score !== null ? item.fixture.away_team_ft_score : '-'}
-        </Text>
-        <Text className="flex-1">{item.home_prediction_score} - {item.away_prediction_score}</Text>
-        <View className={`flex-1 rounded-lg p-2 justify-center items-center ${getResultStyle(item)}`}>
+    <View className="mb-2 p-1 shadow-md">
+      <View className="flex-row bg-gray-300 rounded-lg justify-between items-center p-4">
+        <View className='flex-col '>
+        <Text className="py-2 text-black text-md font-pmedium">{item.fixture.home_team}</Text>
+        <Text className="py-2 text-black text-md font-pmedium">{item.fixture.away_team}</Text>
+        </View>
+
+        <View className='flex-col px-4'>
+        <Text className="py-2 text-black text-md font-pmedium">{item.home_prediction_score}</Text>
+        <Text className="py-2 text-black text-md font-pmedium">{item.away_prediction_score}</Text>
+        </View>
+
+        <View className='flex-col px-4'>
+        <Text className="py-2 text-black text-md font-pmedium">{item.fixture.home_team_ft_score !== null ? item.fixture.home_team_ft_score : ''}</Text>
+        <Text className="py-2 text-black text-md font-pmedium">{item.fixture.away_team_ft_score !== null ? item.fixture.away_team_ft_score : ''}</Text>
+        </View>
+
+        <View className={`w-1/8 rounded-lg p-2 justify-center items-center ${getResultStyle(item)}`}>
           <Text className="text-center text-gray-100">
             {item.fixture.home_team_ft_score !== null && item.fixture.away_team_ft_score !== null
               ? (item.result === item.fixture.result ? 'win' : 'lose')
               : '-'}
           </Text>
         </View>
-        <View className={`flex-1 rounded-lg p-2 justify-center items-center ${getCorrectScoreStyle(item)}`}>
+        <View className={`w-1/8 rounded-lg p-2 justify-center items-center ${getCorrectScoreStyle(item)}`}>
           <Text className="text-center text-gray-100">
             {item.fixture.home_team_ft_score !== null && item.fixture.away_team_ft_score !== null
               ? (item.correct_score === 'correct' ? 'win' : 'lose')
               : '-'}
           </Text>
         </View>
-        <Text className="flex-1">{calculatePoints(item)}</Text>
+        <Text className="w-1/8 text-center">{calculatePoints(item)}</Text>
       </View>
     </View>
   );
+  
 
   const renderLeague = ({ item }: { item: { league: string, data: Prediction[] } }) => (
     <View className="mb-4">
@@ -183,6 +207,7 @@ const PredictionList: React.FC = () => {
         data={item.data}
         keyExtractor={league => league.league}
         renderItem={renderLeague}
+        onRefresh={onRefresh}
       />
     </View>
   );

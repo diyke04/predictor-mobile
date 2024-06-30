@@ -2,14 +2,15 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const axiosInstance = axios.create({
-    baseURL: "http://127.0.0.1:8000/api"
-    //baseURL:"https://predictor-backend-omega.vercel.app/api/predictions"
+    //baseURL: "http://10.0.2.2:8000"
+    baseURL:"https://predictor-backend-omega.vercel.app"
 });
 
 axiosInstance.interceptors.request.use(
     async (config) => {
         try {
             const token = await AsyncStorage.getItem("pred-token");
+            console.log('axios',token)
             if (token) {
                 config.headers['Authorization'] = `Bearer ${JSON.parse(token)}`;
                 config.headers['Content-Type'] = 'application/json';

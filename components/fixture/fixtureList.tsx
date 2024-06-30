@@ -28,11 +28,9 @@ const FixtureList: React.FC = () => {
     const fetchMatches = async () => {
       console.log(token)
       try {
-        const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
-        //const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
-        const response = await axios.get(`${serverUrl}/api/fixtures/user/not-predicted?league_id=${1}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        //const serverUrl = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+        const serverUrl = 'https://predictor-backend-omega.vercel.app/api/predictions';
+        const response = await axiosInstance.get(`/api/fixtures/user/not-predicted?league_id=${1}`);
 
         if (response.status === 200) {
           setMatches(response.data);
@@ -52,7 +50,9 @@ const FixtureList: React.FC = () => {
 
   const postPrediction = async (prediction: Prediction) => {
     try {
-      const response = await axiosInstance.post('https://predictor-backend-omega.vercel.app/api/predictions', prediction);
+      console.log(prediction)
+      const response = await axiosInstance.post('/api/predictions', prediction);
+      
 
       if (response.status === 200) {
         setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.fixture_id));
@@ -93,20 +93,21 @@ const FixtureList: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: Fixture }) => (
-    <View key={item.id} className="bg-background rounded-lg p-4 mb-4 shadow-md">
+    <View key={item.id} className="bg-gray-300  rounded-lg p-4 mb-4 shadow-md">
       <View className="flex-row justify-between mb-2">
-        <Text className="text-sm text-gray-100">{item.league.name}</Text>
-        <Text className="text-sm text-gray-100">{new Date(item.match_date).toLocaleString()}</Text>
+        <Text className="text-sm text-color1 font-pbold">{item.league.name}</Text>
+        <Text className="text-sm text-color1 font-pbold">{new Date(item.match_date).toLocaleString()}</Text>
       </View>
-      <View className="flex-row justify-between items-center mb-2">
-        <Text className="font-bold">{item.home_team}</Text>
-        <Text className="text-gray-100">vs</Text>
-        <Text className="font-bold">{item.away_team}</Text>
+      <View className="flex-row justify-around items-center mb-2">
+        <Text className="font-pbold text-gray-900 ">{item.home_team}</Text>
+        <Text className="text-gray-900 font-pmedium ">vs</Text>
+        <Text className="font-pbold text-gray-900  ">{item.away_team}</Text>
       </View>
       <View className="flex-row justify-between">
-        <View className="w-1/2 pr-2">
-          <Text className="text-sm text-gray-100">Home Score</Text>
+        <View className="w-1/2">
+          <Text className="text-sm font-pbold text-gray-900">Home Score</Text>
           <Picker
+            className=''
             selectedValue={predictions[item.id]?.home_prediction_score || ''}
             style={{ height: 50, width: '100%' }}
             onValueChange={(value) => handleSelectChange(value, item.id, 'home')}
@@ -117,8 +118,8 @@ const FixtureList: React.FC = () => {
             ))}
           </Picker>
         </View>
-        <View className="w-1/2 pl-2">
-          <Text className="text-sm text-gray-100">Away Score</Text>
+        <View className="w-1/2 items-center">
+          <Text className="text-sm font-pbold text-gray-900 ">Away Score</Text>
           <Picker
             selectedValue={predictions[item.id]?.away_prediction_score || ''}
             style={{ height: 50, width: '100%' }}
@@ -148,7 +149,7 @@ const FixtureList: React.FC = () => {
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={{ padding: 16, backgroundColor: '#f0f0f0' }}
-      ListEmptyComponent={<Text className="text-center text-gray-100">No matches available</Text>}
+      ListEmptyComponent={<Text className="text-center text-gray-900">No matches available</Text>}
       getItemLayout={(data, index) => (
         { length: 150, offset: 150 * index, index }
       )}
